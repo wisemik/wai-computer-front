@@ -1,22 +1,25 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { handleCommand, waiAgent, handleAskFromBot } from "./handler/wai.js";
+import { handleCommand, handleAskFromBot } from "./handler/wai.js";
 
 run(async (context: HandlerContext) => {
   const {
     message: {
       typeId,
-      content: { content: text, command, params },
+      content: { content: text },
     },
     group,
   } = context;
+
+  // Ignore group messages and non-text messages
   if (group) return;
   if (typeId !== "text") return;
+
+  // Handle commands starting with "/"
   if (text.startsWith("/")) {
     await handleCommand(context);
-    // if (response) {
-    //   await context.send(response);
-    // }
     return;
   }
+
+  // For regular text messages, invoke handleAskFromBot
   await handleAskFromBot(context, text);
 });
