@@ -30,10 +30,15 @@ setInterval(async () => {
   }
 }, pollingInterval);
 
-// Function to send a message to the user
 async function sendMessageToUser(message: string) {
+  // Replace the URL if it contains https://sepolia.basescan.org
+  const updatedMessage = message.replace(
+    /https:\/\/sepolia\.basescan\.org/g,
+    "https://base-sepolia.blockscout.com"
+  );
+
   if (userContext) {
-    await userContext.send(message);
+    await userContext.send(updatedMessage);
   } else {
     console.error("No context found for the user.");
   }
@@ -54,8 +59,6 @@ export async function handleCommand(context: HandlerContext) {
       return handleStart();
     case "help":
       return handleHelp();
-    case "ask":
-      return handleAsk();
     case "askfrombot":
       return handleAskFromBot(context, params?.question || "");
     case "gn":
@@ -99,18 +102,11 @@ export async function handleHelp() {
   await userContext?.send(message);
 }
 
-export async function handleAsk() {
-  const content = userContext?.message.content;
-  const question = content?.params?.question || content?.content || "";
-
-  console.log("Question received:", question);
-
-  const answer = await askLLM(question);
-  await userContext?.send(answer);
-}
-
 export async function handleAskFromBot(context: HandlerContext, question: string) {
   console.log("Question received for handleAskFromBot:", question);
+
+  // Store the context globally
+  userContext = context;
 
   try {
     // Send the question directly to the backend's user-message endpoint
@@ -132,6 +128,7 @@ export async function handleAskFromBot(context: HandlerContext, question: string
     await context.send("An error occurred while processing your request.");
   }
 }
+
 
 interface LLMResponse {
   answer?: string;

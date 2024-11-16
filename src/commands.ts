@@ -1,5 +1,5 @@
 import type { CommandGroup } from "@xmtp/message-kit";
-import { handleAsk, handleFriend, handleGn, handleStart,
+import { handleFriend, handleGn, handleStart,
    } from "./handler/wai.js";
 
 export const commands: CommandGroup[] = [
@@ -9,7 +9,6 @@ export const commands: CommandGroup[] = [
     triggers: [
       "/start",
       "/help",
-      "/ask",
       "/friend",
       "/gn"
     ],
@@ -27,16 +26,6 @@ export const commands: CommandGroup[] = [
         description: "Start the bot.",
         params: {},
       },
-      {
-        command: "/ask [question]",
-        handler: handleAsk, 
-        description: "Ask a question.",
-        params: {
-          question: {
-            type: "prompt",
-          },
-        },
-      },    
       {
         command: "/friend",
         handler: handleFriend,
